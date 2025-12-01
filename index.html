@@ -605,7 +605,7 @@
         <!-- Configuration du serveur -->
         <div class="server-config">
             <label><strong>URL du serveur JSON:</strong></label><br><br>
-            <input type="text" id="serverUrl" value="https://canadian-burger.onrender.com" ...>
+            <input type="text" id="serverUrl" value="http://localhost:3000" placeholder="http://localhost:3000">
             <button onclick="testConnection()">Tester la connexion</button>
             <span id="serverStatus" class="server-status disconnected">Déconnecté</span>
         </div>
@@ -707,7 +707,7 @@
         // ============================================
         
         // URL de base du serveur JSON (modifiable)
-        let API_BASE_URL = 'https://canadian-burger.onrender.com';
+        let API_BASE_URL = 'http://localhost:3000';
 
         // Helper pour les requêtes API
         const api = {
@@ -1092,21 +1092,23 @@
                 // Sauvegarder la commande en attente sur le serveur
                 const savedOrder = await api.post('/pendingOrders', orderData);
 
-                // Générer le QR code avec l'ID de la commande
-                const qrData = {
-                    orderId: savedOrder.id,
-                    ...orderData
-                };
+                // QR code simplifié : uniquement l'ID de la commande
+                const qrData = `ORDER:${savedOrder.id}`;
 
                 document.getElementById('orderQRCode').innerHTML = '';
                 new QRCode(document.getElementById("orderQRCode"), {
-                    text: JSON.stringify(qrData),
-                    width: 250,
-                    height: 250
+                    text: qrData,
+                    width: 200,
+                    height: 200,
+                    correctLevel: QRCode.CorrectLevel.L
                 });
 
                 document.getElementById('orderQRSection').style.display = 'block';
                 showToast('QR Code généré avec succès !');
+
+                // Vider le panier après génération
+                prepareCart = [];
+                updatePrepareCart();
 
             } catch (error) {
                 showToast('Erreur lors de la génération du QR', 'error');
@@ -1190,30 +1192,46 @@
             });
         }
 
-        function onScanSuccess(decodedText) {
+        async function onScanSuccess(decodedText) {
             try {
-                const orderData = JSON.parse(decodedText);
-                displayScannedOrder(orderData);
                 html5QrCode.stop();
                 document.getElementById('reader').style.display = 'none';
+
+                // Vérifier si c'est le nouveau format simplifié
+                if (decodedText.startsWith('ORDER:')) {
+                    const orderId = decodedText.replace('ORDER:', '');
+                    
+                    // Récupérer les données depuis le serveur
+                    const orderData = await api.get(`/pendingOrders/${orderId}`);
+                    displayScannedOrder(orderData);
+                    
+                } else {
+                    // Ancien format JSON (rétrocompatibilité)
+                    const orderData = JSON.parse(decodedText);
+                    displayScannedOrder(orderData);
+                }
+                
             } catch (e) {
-                alert("QR code invalide");
+                console.error('Erreur scan:', e);
+                showToast('QR code invalide ou commande introuvable', 'error');
             }
         }
 
         function displayScannedOrder(orderData) {
             const section = document.getElementById('scannedOrderSection');
+            const orderId = orderData.id || orderData.orderId;
+            
             section.innerHTML = `
                 <div class="scanned-order">
                     <h3>Commande scannée</h3>
                     <p><strong>Client ID:</strong> ${orderData.clientId}</p>
-                    <p><strong>Commande #${orderData.orderId}</strong></p>
+                    <p><strong>Commande #${orderId}</strong></p>
                     <div class="order-items">
                         ${orderData.items.map(item => `<p>${item.name} - ${item.price.toFixed(2)}€</p>`).join('')}
                     </div>
                     <p><strong>Total:</strong> ${orderData.total.toFixed(2)}€</p>
                     <p><strong>Points à créditer:</strong> ${orderData.points}</p>
-                    <button class="btn-primary" onclick="validateScannedOrder(${orderData.points}, ${orderData.orderId}, '${orderData.clientId}')">
+                    <button class="btn-primary" onclick="validateScannedOrder(${orderData.points}, ${orderId}, '${orderData.clientId}')">
                         Valider la commande
                     </button>
                 </div>
