@@ -605,7 +605,7 @@
         <!-- Configuration du serveur -->
         <div class="server-config">
             <label><strong>URL du serveur JSON:</strong></label><br><br>
-            <input type="text" id="serverUrl" value="http://localhost:3000" placeholder="http://localhost:3000">
+            <input type="text" id="serverUrl" value="https://canadian-burger.onrender.com" ...>
             <button onclick="testConnection()">Tester la connexion</button>
             <span id="serverStatus" class="server-status disconnected">Déconnecté</span>
         </div>
@@ -707,7 +707,7 @@
         // ============================================
         
         // URL de base du serveur JSON (modifiable)
-        let API_BASE_URL = 'http://localhost:3000';
+        let API_BASE_URL = 'https://canadian-burger.onrender.com';
 
         // Helper pour les requêtes API
         const api = {
