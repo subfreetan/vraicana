@@ -1318,19 +1318,34 @@
 
             try {
                 // Vérifier si le pseudo existe déjà
-                const existingUsers = await api.get(`/accounts?pseudo=${pseudo}`);
+                let existingUsers = [];
+                try {
+                    existingUsers = await api.get(`/accounts?pseudo=${pseudo}`);
+                } catch (e) {
+                    // La collection n'existe peut-être pas encore, on continue
+                    console.log('Collection accounts peut-être inexistante, on tente de créer');
+                }
                 
                 if (existingUsers.length > 0) {
                     showAuthError('Ce pseudo est déjà utilisé');
                     return;
                 }
 
+                // Générer un clientId unique pour ce compte
+                const clientId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+                
                 // Créer le compte
-                const clientId = document.getElementById('userId').textContent;
-                await api.post('/accounts', {
+                const newAccount = await api.post('/accounts', {
                     pseudo: pseudo,
                     password: password,
                     clientId: clientId,
+                    createdAt: new Date().toISOString()
+                });
+
+                // Créer aussi l'entrée utilisateur pour les points
+                await api.post('/users', {
+                    clientId: clientId,
+                    points: 0,
                     createdAt: new Date().toISOString()
                 });
 
@@ -1347,7 +1362,7 @@
 
             } catch (error) {
                 console.error('Erreur inscription:', error);
-                showAuthError('Erreur lors de l\'inscription');
+                showAuthError('Erreur: ' + (error.message || 'Vérifiez que le serveur est accessible'));
             }
         }
 
