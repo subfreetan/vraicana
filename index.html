@@ -687,6 +687,253 @@
             color: #888;
             font-size: 18px;
         }
+
+        /* Système d'authentification */
+        .profile-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .auth-section {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .auth-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .auth-tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: #dc2626;
+        }
+
+        .auth-form-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .auth-input {
+            padding: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper .auth-input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .auth-btn {
+            padding: 14px;
+            background: white;
+            color: #dc2626;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .auth-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-error {
+            background: #ff4757;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .auth-success {
+            background: #4caf50;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Profil connecté */
+        .user-info-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .user-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .user-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .user-value {
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-password-small {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-password-small:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modify-btn {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .modify-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .logout-btn {
+            margin-top: 10px;
+            background: #ff4757;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #ff3838;
+        }
+
+        .modify-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .save-btn {
+            flex: 1;
+            background: #4caf50;
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .save-btn:hover {
+            background: #45a049;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #888;
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: #666;
+        }
+
+        #modifyPasswordForm {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #modifyPasswordForm .auth-input {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -723,7 +970,78 @@
                         <span id="userPoints">0</span> Points
                     </div>
                 </div>
-                <div id="qrcode"></div>
+                <div class="profile-content">
+                    <div id="qrcode"></div>
+                    
+                    <!-- Zone Connexion/Inscription -->
+                    <div class="auth-section">
+                        <!-- Formulaire non connecté -->
+                        <div id="authForm">
+                            <h3 class="auth-title">👤 Mon Compte</h3>
+                            
+                            <div class="auth-tabs">
+                                <button class="auth-tab active" onclick="showAuthTab('login')">Connexion</button>
+                                <button class="auth-tab" onclick="showAuthTab('register')">Inscription</button>
+                            </div>
+                            
+                            <!-- Connexion -->
+                            <div id="loginForm" class="auth-form-content">
+                                <input type="text" id="loginPseudo" placeholder="Pseudo" class="auth-input">
+                                <div class="password-wrapper">
+                                    <input type="password" id="loginPassword" placeholder="Mot de passe" class="auth-input">
+                                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">👁️</button>
+                                </div>
+                                <button class="auth-btn" onclick="loginUser()">Se connecter</button>
+                            </div>
+                            
+                            <!-- Inscription -->
+                            <div id="registerForm" class="auth-form-content" style="display:none;">
+                                <input type="text" id="registerPseudo" placeholder="Choisir un pseudo" class="auth-input">
+                                <div class="password-wrapper">
+                                    <input type="password" id="registerPassword" placeholder="Choisir un mot de passe" class="auth-input">
+                                    <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">👁️</button>
+                                </div>
+                                <button class="auth-btn" onclick="registerUser()">S'inscrire</button>
+                            </div>
+                            
+                            <div id="authError" class="auth-error" style="display:none;"></div>
+                            <div id="authSuccess" class="auth-success" style="display:none;"></div>
+                        </div>
+                        
+                        <!-- Profil connecté -->
+                        <div id="userProfile" style="display:none;">
+                            <h3 class="auth-title">👤 Connecté</h3>
+                            <div class="user-info-card">
+                                <div class="user-info-row">
+                                    <span class="user-label">Pseudo:</span>
+                                    <span class="user-value" id="displayPseudo">-</span>
+                                </div>
+                                <div class="user-info-row">
+                                    <span class="user-label">Mot de passe:</span>
+                                    <span class="user-value">
+                                        <span id="displayPassword">••••••••</span>
+                                        <button class="toggle-password-small" onclick="toggleDisplayPassword()">👁️</button>
+                                    </span>
+                                </div>
+                                <button class="auth-btn modify-btn" onclick="showModifyPassword()">✏️ Modifier mot de passe</button>
+                                
+                                <!-- Formulaire modification mot de passe -->
+                                <div id="modifyPasswordForm" style="display:none;">
+                                    <div class="password-wrapper">
+                                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="auth-input">
+                                        <button type="button" class="toggle-password" onclick="togglePassword('newPassword')">👁️</button>
+                                    </div>
+                                    <div class="modify-buttons">
+                                        <button class="auth-btn save-btn" onclick="saveNewPassword()">💾 Sauvegarder</button>
+                                        <button class="auth-btn cancel-btn" onclick="cancelModifyPassword()">✖️ Annuler</button>
+                                    </div>
+                                </div>
+                                
+                                <button class="auth-btn logout-btn" onclick="logoutUser()">🚪 Se déconnecter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <h2>Historique des Points</h2>
@@ -921,9 +1239,11 @@
         // ============================================
         
         let currentUser = null;
+        let loggedInUser = null; // Utilisateur connecté (avec pseudo/mdp)
         let ccCart = [];
         let prepareCart = [];
         let html5QrCode = null;
+        let passwordVisible = false; // Pour afficher/cacher le mot de passe
 
         // ============================================
         // INITIALISATION
@@ -934,7 +1254,247 @@
             displayMenu();
             await testConnection();
             loadPointsHistory();
+            checkLoggedInUser();
         });
+
+        // ============================================
+        // AUTHENTIFICATION
+        // ============================================
+
+        function showAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'flex' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'flex' : 'none';
+            
+            hideAuthMessages();
+        }
+
+        function hideAuthMessages() {
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authSuccess').style.display = 'none';
+        }
+
+        function showAuthError(message) {
+            const errorEl = document.getElementById('authError');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            document.getElementById('authSuccess').style.display = 'none';
+        }
+
+        function showAuthSuccess(message) {
+            const successEl = document.getElementById('authSuccess');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function registerUser() {
+            const pseudo = document.getElementById('registerPseudo').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            hideAuthMessages();
+
+            if (!pseudo || !password) {
+                showAuthError('Veuillez remplir tous les champs');
+                return;
+            }
+
+            if (pseudo.length < 3) {
+                showAuthError('Le pseudo doit contenir au moins 3 caractères');
+                return;
+            }
+
+            if (password.length < 4) {
+                showAuthError('Le mot de passe doit contenir au moins 4 caractères');
+                return;
+            }
+
+            try {
+                // Vérifier si le pseudo existe déjà
+                const existingUsers = await api.get(`/accounts?pseudo=${pseudo}`);
+                
+                if (existingUsers.length > 0) {
+                    showAuthError('Ce pseudo est déjà utilisé');
+                    return;
+                }
+
+                // Créer le compte
+                const clientId = document.getElementById('userId').textContent;
+                await api.post('/accounts', {
+                    pseudo: pseudo,
+                    password: password,
+                    clientId: clientId,
+                    createdAt: new Date().toISOString()
+                });
+
+                showAuthSuccess('Inscription réussie ! Vous pouvez vous connecter.');
+                
+                // Vider les champs
+                document.getElementById('registerPseudo').value = '';
+                document.getElementById('registerPassword').value = '';
+
+                // Basculer sur l'onglet connexion après 1.5s
+                setTimeout(() => {
+                    document.querySelector('.auth-tab').click();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erreur inscription:', error);
+                showAuthError('Erreur lors de l\'inscription');
+            }
+        }
+
+        async function loginUser() {
+            const pseudo = document.getElementById('loginPseudo').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            hideAuthMessages();
+
+            if (!pseudo || !password) {
+                showAuthError('Veuillez remplir tous les champs');
+                return;
+            }
+
+            try {
+                // Chercher le compte
+                const accounts = await api.get(`/accounts?pseudo=${pseudo}`);
+                
+                if (accounts.length === 0) {
+                    showAuthError('Pseudo introuvable. Inscrivez-vous d\'abord !');
+                    return;
+                }
+
+                const account = accounts[0];
+
+                if (account.password !== password) {
+                    showAuthError('Mot de passe incorrect');
+                    return;
+                }
+
+                // Connexion réussie
+                loggedInUser = account;
+                
+                // Mettre à jour le clientId avec celui du compte
+                document.getElementById('userId').textContent = account.clientId;
+                
+                // Sauvegarder la session localement
+                sessionStorage.setItem('loggedInUser', JSON.stringify(account));
+
+                // Recharger les données utilisateur
+                await loadUserPoints();
+                loadPointsHistory();
+
+                // Afficher le profil connecté
+                showLoggedInProfile();
+                
+                showToast(`Bienvenue ${pseudo} !`);
+
+            } catch (error) {
+                console.error('Erreur connexion:', error);
+                showAuthError('Erreur lors de la connexion');
+            }
+        }
+
+        function showLoggedInProfile() {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('userProfile').style.display = 'block';
+            document.getElementById('displayPseudo').textContent = loggedInUser.pseudo;
+            document.getElementById('displayPassword').textContent = '••••••••';
+            passwordVisible = false;
+        }
+
+        function checkLoggedInUser() {
+            const savedUser = sessionStorage.getItem('loggedInUser');
+            if (savedUser) {
+                loggedInUser = JSON.parse(savedUser);
+                document.getElementById('userId').textContent = loggedInUser.clientId;
+                showLoggedInProfile();
+            }
+        }
+
+        function toggleDisplayPassword() {
+            const displayEl = document.getElementById('displayPassword');
+            passwordVisible = !passwordVisible;
+            
+            if (passwordVisible) {
+                displayEl.textContent = loggedInUser.password;
+            } else {
+                displayEl.textContent = '••••••••';
+            }
+        }
+
+        function showModifyPassword() {
+            document.getElementById('modifyPasswordForm').style.display = 'block';
+            document.getElementById('newPassword').value = '';
+        }
+
+        function cancelModifyPassword() {
+            document.getElementById('modifyPasswordForm').style.display = 'none';
+        }
+
+        async function saveNewPassword() {
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (!newPassword || newPassword.length < 4) {
+                showToast('Le mot de passe doit contenir au moins 4 caractères', 'error');
+                return;
+            }
+
+            try {
+                await api.patch(`/accounts/${loggedInUser.id}`, {
+                    password: newPassword
+                });
+
+                loggedInUser.password = newPassword;
+                sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+
+                document.getElementById('modifyPasswordForm').style.display = 'none';
+                
+                // Mettre à jour l'affichage si visible
+                if (passwordVisible) {
+                    document.getElementById('displayPassword').textContent = newPassword;
+                }
+
+                showToast('Mot de passe modifié avec succès !');
+
+            } catch (error) {
+                console.error('Erreur modification:', error);
+                showToast('Erreur lors de la modification', 'error');
+            }
+        }
+
+        function logoutUser() {
+            loggedInUser = null;
+            sessionStorage.removeItem('loggedInUser');
+            
+            // Réinitialiser le clientId par défaut
+            document.getElementById('userId').textContent = '12345';
+            
+            // Afficher le formulaire de connexion
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('userProfile').style.display = 'none';
+            
+            // Vider les champs
+            document.getElementById('loginPseudo').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            // Recharger les données
+            loadUserPoints();
+            loadPointsHistory();
+            
+            // Régénérer le QR code
+            document.getElementById('qrcode').innerHTML = '';
+            generateUserQR();
+            
+            showToast('Déconnexion réussie');
+        }
 
         // ============================================
         // GESTION DES UTILISATEURS
