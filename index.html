@@ -595,6 +595,98 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Historique des points */
+        .history-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .history-card:hover {
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+            transform: translateX(4px);
+        }
+
+        .history-card.clickcollect {
+            border-left-color: #2196f3;
+        }
+
+        .history-card.prepare {
+            border-left-color: #4caf50;
+        }
+
+        .history-card.reward {
+            border-left-color: #ff9800;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .history-type {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: white;
+        }
+
+        .history-type.clickcollect {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+        }
+
+        .history-type.prepare {
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+        }
+
+        .history-type.reward {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .history-points {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: #dc2626;
+            font-weight: 400;
+        }
+
+        .history-points.negative {
+            color: #ff9800;
+        }
+
+        .history-date {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .history-items {
+            color: #666;
+            font-size: 15px;
+            padding-left: 10px;
+            border-left: 2px solid #eee;
+            margin-top: 10px;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -605,7 +697,7 @@
         <!-- Configuration du serveur -->
         <div class="server-config">
             <label><strong>URL du serveur JSON:</strong></label><br><br>
-            <input type="text" id="serverUrl" value="https://canadian-burger.onrender.com" ...>
+            <input type="text" id="serverUrl" value="https://canadian-burger.onrender.com" placeholder="https://canadian-burger.onrender.com">
             <button onclick="testConnection()">Tester la connexion</button>
             <span id="serverStatus" class="server-status disconnected">Déconnecté</span>
         </div>
@@ -632,6 +724,11 @@
                     </div>
                 </div>
                 <div id="qrcode"></div>
+            </div>
+
+            <h2>Historique des Points</h2>
+            <div id="pointsHistory">
+                <p>Chargement de l'historique...</p>
             </div>
         </div>
 
@@ -836,6 +933,7 @@
             generateUserQR();
             displayMenu();
             await testConnection();
+            loadPointsHistory();
         });
 
         // ============================================
@@ -898,7 +996,9 @@
             document.getElementById(sectionId).classList.add('active');
             event.target.classList.add('active');
 
-            if (sectionId === 'clickcollect') {
+            if (sectionId === 'profile') {
+                loadPointsHistory();
+            } else if (sectionId === 'clickcollect') {
                 updateCCCart();
             } else if (sectionId === 'prepare') {
                 updatePrepareCart();
@@ -909,6 +1009,103 @@
             } else if (sectionId === 'rewards') {
                 updateRewardsSection();
             }
+        }
+
+        // ============================================
+        // HISTORIQUE DES POINTS
+        // ============================================
+        
+        async function loadPointsHistory() {
+            const historyDiv = document.getElementById('pointsHistory');
+            const clientId = document.getElementById('userId').textContent;
+            
+            try {
+                // Récupérer les commandes et récompenses de l'utilisateur
+                const [orders, rewards] = await Promise.all([
+                    api.get(`/orders?clientId=${clientId}`),
+                    api.get(`/rewards?clientId=${clientId}`)
+                ]);
+
+                // Combiner et trier par date (plus récent en premier)
+                const history = [
+                    ...orders.map(order => ({
+                        type: order.type === 'clickcollect' ? 'clickcollect' : 'prepare',
+                        items: order.items || [],
+                        points: order.points,
+                        date: order.createdAt || order.completedAt,
+                        isPositive: true
+                    })),
+                    ...rewards.map(reward => ({
+                        type: 'reward',
+                        items: [{ name: reward.type === 'free_drink' ? 'Boisson offerte' : 'Récompense' }],
+                        points: reward.pointsCost,
+                        date: reward.redeemedAt,
+                        isPositive: false
+                    }))
+                ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (history.length === 0) {
+                    historyDiv.innerHTML = `
+                        <div class="history-empty">
+                            📋 Aucun historique pour le moment.<br>
+                            Passez une commande pour gagner des points !
+                        </div>
+                    `;
+                    return;
+                }
+
+                historyDiv.innerHTML = history.map(entry => {
+                    const typeLabel = getTypeLabel(entry.type);
+                    const typeClass = entry.type;
+                    const pointsSign = entry.isPositive ? '+' : '-';
+                    const pointsClass = entry.isPositive ? '' : 'negative';
+                    const formattedDate = formatDate(entry.date);
+                    const itemsList = entry.items && entry.items.length > 0 
+                        ? entry.items.map(item => item.name).join(', ')
+                        : 'Aucun article';
+
+                    return `
+                        <div class="history-card ${typeClass}">
+                            <div class="history-header">
+                                <span class="history-type ${typeClass}">${typeLabel}</span>
+                                <span class="history-points ${pointsClass}">${pointsSign}${entry.points} pts</span>
+                            </div>
+                            <div class="history-date">📅 ${formattedDate}</div>
+                            <div class="history-items">🛒 ${itemsList}</div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Erreur chargement historique:', error);
+                historyDiv.innerHTML = `
+                    <div class="history-empty">
+                        ⚠️ Erreur de chargement de l'historique.<br>
+                        Vérifiez la connexion au serveur.
+                    </div>
+                `;
+            }
+        }
+
+        function getTypeLabel(type) {
+            switch(type) {
+                case 'clickcollect': return '🖱️ Click & Collect';
+                case 'prepare': return '📱 Préparation';
+                case 'reward': return '🎁 Récompense';
+                default: return '📋 Commande';
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Date inconnue';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         // ============================================
@@ -1220,6 +1417,7 @@
         function displayScannedOrder(orderData) {
             const section = document.getElementById('scannedOrderSection');
             const orderId = orderData.id || orderData.orderId;
+            const itemsJson = encodeURIComponent(JSON.stringify(orderData.items));
             
             section.innerHTML = `
                 <div class="scanned-order">
@@ -1231,15 +1429,17 @@
                     </div>
                     <p><strong>Total:</strong> ${orderData.total.toFixed(2)}€</p>
                     <p><strong>Points à créditer:</strong> ${orderData.points}</p>
-                    <button class="btn-primary" onclick="validateScannedOrder(${orderData.points}, ${orderId}, '${orderData.clientId}')">
+                    <button class="btn-primary" onclick="validateScannedOrder(${orderData.points}, ${orderId}, '${orderData.clientId}', '${itemsJson}', ${orderData.total})">
                         Valider la commande
                     </button>
                 </div>
             `;
         }
 
-        async function validateScannedOrder(points, orderId, clientId) {
+        async function validateScannedOrder(points, orderId, clientId, itemsJson, total) {
             try {
+                const items = JSON.parse(decodeURIComponent(itemsJson));
+                
                 // Trouver l'utilisateur par clientId
                 const users = await api.get(`/users?clientId=${clientId}`);
                 
@@ -1258,12 +1458,15 @@
                     // La commande n'existe peut-être pas
                 }
 
-                // Créer une commande validée
+                // Créer une commande validée avec tous les détails
                 await api.post('/orders', {
-                    type: 'instore',
+                    type: 'prepare',
                     clientId: clientId,
+                    items: items,
+                    total: total,
                     points: points,
                     status: 'completed',
+                    createdAt: new Date().toISOString(),
                     completedAt: new Date().toISOString()
                 });
 
