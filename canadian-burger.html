@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canadian Burger - Commande en ligne</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bebas Neue', 'Impact', 'Arial Black', sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #dc2626;
+            font-size: 64px;
+            font-weight: 400;
+            margin-bottom: 5px;
+            text-align: center;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-style: italic;
+            text-shadow: 3px 3px 0px #000, 
+                         -1px -1px 0px #fff,
+                         2px 2px 8px rgba(220, 38, 38, 0.4);
+            transform: skewY(-2deg);
+        }
+
+        .subtitle {
+            font-family: 'Bebas Neue', sans-serif;
+            text-align: center;
+            color: #000;
+            font-size: 16px;
+            margin-bottom: 30px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #1a1a1a;
+            margin: 30px 0 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid transparent;
+            background: linear-gradient(to right, #dc2626, #991b1b);
+            background-size: 100% 3px;
+            background-repeat: no-repeat;
+            background-position: bottom;
+            font-weight: 400;
+            font-size: 40px;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 2px;
+            transform: skewY(-1deg);
+        }
+
+        .nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 16px;
+        }
+
+        .nav button {
+            font-family: 'Bebas Neue', sans-serif;
+            padding: 12px 24px;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 400;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            min-width: 120px;
+            letter-spacing: 1px;
+        }
+
+        .nav button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .nav button.active {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+        }
+
+        .profile-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .profile-info h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .points-badge {
+            font-family: 'Bebas Neue', sans-serif;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: 400;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.2);
+            border-color: #dc2626;
+        }
+
+        .menu-item h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #dc2626;
+            margin-bottom: 12px;
+            font-size: 28px;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .menu-item p {
+            color: #666;
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .menu-item button {
+            font-family: 'Bebas Neue', sans-serif;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 12px;
+            font-weight: 400;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .menu-item button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .cart-item {
+            background: white;
+            border: 2px solid #f0f0f0;
+            padding: 20px;
+            margin: 12px 0;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            border-color: #dc2626;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+        }
+
+        .cart-item button {
+            font-family: 'Bebas Neue', sans-serif;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-size: 16px;
+        }
+
+        .cart-item button:hover {
+            background: #ff3838;
+            transform: scale(1.05);
+        }
+
+        .cart-total {
+            font-family: 'Bebas Neue', sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: 400;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary {
+            font-family: 'Bebas Neue', sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 18px 36px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 400;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .order-qr {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            margin-top: 20px;
+            border: 2px solid #dc2626;
+        }
+
+        .admin-login {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .admin-login input {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-login input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .order-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-left: 4px solid #dc2626;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+            transform: translateX(4px);
+        }
+
+        .order-items {
+            margin: 15px 0;
+            padding-left: 20px;
+            color: #666;
+        }
+
+        #reader {
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .scanned-order {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 20px;
+            border: 2px solid #2196f3;
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.2);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .reward-card {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 20px 60px rgba(220, 38, 38, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reward-card::before {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            top: -20px;
+            right: -20px;
+        }
+
+        .reward-card h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 3px;
+        }
+
+        .reward-card p {
+            font-size: 18px;
+            margin: 15px 0;
+            opacity: 0.95;
+        }
+
+        .reward-card button {
+            font-family: 'Bebas Neue', sans-serif;
+            background: white;
+            color: #dc2626;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 400;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        .reward-card button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .reward-card button:disabled {
+            background: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .toast {
+            font-family: 'Bebas Neue', sans-serif;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            z-index: 1000;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 400;
+            backdrop-filter: blur(10px);
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        .toast.preparing {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .server-config {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .server-config input {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-right: 10px;
+            width: 300px;
+        }
+
+        .server-config button {
+            font-family: 'Bebas Neue', sans-serif;
+            padding: 12px 24px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .server-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .server-status.connected {
+            background: #4caf50;
+            color: white;
+        }
+
+        .server-status.disconnected {
+            background: #f44336;
+            color: white;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍔 CANADIAN BURGER</h1>
+        <div class="subtitle">par Despa et Yasser Ghourdou</div>
+
+        <!-- Configuration du serveur -->
+        <div class="server-config">
+            <label><strong>URL du serveur JSON:</strong></label><br><br>
+            <input type="text" id="serverUrl" value="https://canadian-burger.onrender.com" ...>
+            <button onclick="testConnection()">Tester la connexion</button>
+            <span id="serverStatus" class="server-status disconnected">Déconnecté</span>
+        </div>
+
+        <div class="nav">
+            <button onclick="showSection('profile')" class="active">Mon Profil</button>
+            <button onclick="showSection('menu')">Menu</button>
+            <button onclick="showSection('clickcollect')">Click & Collect</button>
+            <button onclick="showSection('prepare')">Préparer ma commande</button>
+            <button onclick="showSection('rewards')">Récompenses</button>
+            <button onclick="showSection('admin')">Admin</button>
+        </div>
+
+        <!-- PROFIL -->
+        <div id="profile" class="section active">
+            <h2>Mon Profil</h2>
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div>
+                        <h3>ID Client: <span id="userId">12345</span></h3>
+                    </div>
+                    <div class="points-badge">
+                        <span id="userPoints">0</span> Points
+                    </div>
+                </div>
+                <div id="qrcode"></div>
+            </div>
+        </div>
+
+        <!-- MENU -->
+        <div id="menu" class="section">
+            <h2>Notre Menu</h2>
+            <div class="menu-grid" id="menuGrid"></div>
+        </div>
+
+        <!-- CLICK & COLLECT -->
+        <div id="clickcollect" class="section">
+            <h2>Click & Collect</h2>
+            <div id="ccCart"></div>
+            <div id="ccTotal" class="cart-total" style="display:none;">
+                Total: <span id="ccTotalPrice">0</span>€ | Points: <span id="ccTotalPoints">0</span>
+            </div>
+            <button class="btn-primary" onclick="validateClickCollect()" id="ccValidateBtn" style="display:none;">Valider et Payer</button>
+            <div id="ccSuccess" style="display:none;"></div>
+        </div>
+
+        <!-- PREPARER COMMANDE -->
+        <div id="prepare" class="section">
+            <h2>Préparer ma commande</h2>
+            <div id="prepareCart"></div>
+            <div id="prepareTotal" class="cart-total" style="display:none;">
+                Total: <span id="prepareTotalPrice">0</span>€ | Points: <span id="prepareTotalPoints">0</span>
+            </div>
+            <button class="btn-primary" onclick="generateOrderQR()" id="prepareValidateBtn" style="display:none;">Générer QR Code</button>
+            <div id="orderQRSection" style="display:none;" class="order-qr">
+                <h3>Scannez ce QR à la caisse</h3>
+                <div id="orderQRCode"></div>
+            </div>
+        </div>
+
+        <!-- RECOMPENSES -->
+        <div id="rewards" class="section">
+            <h2>Mes Récompenses</h2>
+            <div class="reward-card">
+                <h3>🥤 Boisson Offerte</h3>
+                <p>Échangez vos points contre une boisson gratuite !</p>
+                <p style="font-size: 22px; font-weight: bold;">Coût: 50 Points</p>
+                <p>Vos points: <span id="rewardsPoints">0</span></p>
+                <button onclick="redeemReward()" id="redeemBtn">Échanger</button>
+            </div>
+            <div id="rewardSuccess" style="display:none;"></div>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="admin" class="section">
+            <div id="adminLogin" class="admin-login">
+                <h2>Accès Admin</h2>
+                <input type="password" id="adminCode" placeholder="Code admin">
+                <button class="btn-primary" onclick="loginAdmin()">Se connecter</button>
+            </div>
+
+            <div id="adminPanel" style="display:none;">
+                <h2>Panneau Admin</h2>
+                
+                <h3>Commandes Click & Collect en cours</h3>
+                <div id="adminOrders"></div>
+
+                <h3 style="margin-top: 30px;">Scanner commande client</h3>
+                <button class="btn-primary" onclick="startScanner()">Démarrer le scanner</button>
+                <div id="reader"></div>
+                <div id="scannedOrderSection"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION JSON SERVER
+        // ============================================
+        
+        // URL de base du serveur JSON (modifiable)
+        let API_BASE_URL = 'https://canadian-burger.onrender.com';
+
+        // Helper pour les requêtes API
+        const api = {
+            async get(endpoint) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`GET ${endpoint} error:`, error);
+                    throw error;
+                }
+            },
+
+            async post(endpoint, data) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`POST ${endpoint} error:`, error);
+                    throw error;
+                }
+            },
+
+            async put(endpoint, data) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`PUT ${endpoint} error:`, error);
+                    throw error;
+                }
+            },
+
+            async patch(endpoint, data) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`PATCH ${endpoint} error:`, error);
+                    throw error;
+                }
+            },
+
+            async delete(endpoint) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return true;
+                } catch (error) {
+                    console.error(`DELETE ${endpoint} error:`, error);
+                    throw error;
+                }
+            }
+        };
+
+        // Tester la connexion au serveur
+        async function testConnection() {
+            const statusEl = document.getElementById('serverStatus');
+            API_BASE_URL = document.getElementById('serverUrl').value.trim();
+            
+            try {
+                statusEl.textContent = 'Test...';
+                statusEl.className = 'server-status';
+                
+                await api.get('/users');
+                
+                statusEl.textContent = 'Connecté ✓';
+                statusEl.className = 'server-status connected';
+                showToast('Connexion au serveur réussie !');
+                
+                // Recharger les données
+                await loadUserPoints();
+                
+            } catch (error) {
+                statusEl.textContent = 'Déconnecté ✗';
+                statusEl.className = 'server-status disconnected';
+                showToast('Erreur de connexion au serveur', 'error');
+            }
+        }
+
+        // ============================================
+        // DONNÉES DES PRODUITS
+        // ============================================
+        
+        const menuItems = [
+            { id: 1, name: "Kebab", price: 6.50, points: 10 },
+            { id: 2, name: "Burger", price: 7.00, points: 12 },
+            { id: 3, name: "Tacos", price: 8.00, points: 15 },
+            { id: 4, name: "Pizza", price: 9.00, points: 18 },
+            { id: 5, name: "Frites", price: 3.00, points: 5 },
+            { id: 6, name: "Boisson", price: 2.00, points: 3 }
+        ];
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        
+        let currentUser = null;
+        let ccCart = [];
+        let prepareCart = [];
+        let html5QrCode = null;
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            generateUserQR();
+            displayMenu();
+            await testConnection();
+        });
+
+        // ============================================
+        // GESTION DES UTILISATEURS
+        // ============================================
+        
+        async function loadUserPoints() {
+            const userId = document.getElementById('userId').textContent;
+            
+            try {
+                // Chercher l'utilisateur par son ID client
+                const users = await api.get(`/users?clientId=${userId}`);
+                
+                if (users.length > 0) {
+                    currentUser = users[0];
+                } else {
+                    // Créer un nouvel utilisateur
+                    currentUser = await api.post('/users', {
+                        clientId: userId,
+                        points: 0,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                
+                updatePointsDisplay();
+                
+            } catch (error) {
+                console.error('Erreur chargement utilisateur:', error);
+                showToast('Erreur de chargement des points', 'error');
+            }
+        }
+
+        async function saveUserPoints() {
+            if (!currentUser) return;
+            
+            try {
+                await api.patch(`/users/${currentUser.id}`, {
+                    points: currentUser.points
+                });
+                updatePointsDisplay();
+            } catch (error) {
+                console.error('Erreur sauvegarde points:', error);
+                showToast('Erreur de sauvegarde', 'error');
+            }
+        }
+
+        function updatePointsDisplay() {
+            if (currentUser) {
+                document.getElementById('userPoints').textContent = currentUser.points;
+            }
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+
+            if (sectionId === 'clickcollect') {
+                updateCCCart();
+            } else if (sectionId === 'prepare') {
+                updatePrepareCart();
+            } else if (sectionId === 'admin') {
+                document.getElementById('adminLogin').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('adminCode').value = '';
+            } else if (sectionId === 'rewards') {
+                updateRewardsSection();
+            }
+        }
+
+        // ============================================
+        // QR CODE PROFIL
+        // ============================================
+        
+        function generateUserQR() {
+            const userId = document.getElementById('userId').textContent;
+            new QRCode(document.getElementById("qrcode"), {
+                text: userId,
+                width: 200,
+                height: 200
+            });
+        }
+
+        // ============================================
+        // MENU
+        // ============================================
+        
+        function displayMenu() {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = menuItems.map(item => `
+                <div class="menu-item">
+                    <h3>${item.name}</h3>
+                    <p>Prix: ${item.price.toFixed(2)}€</p>
+                    <p>Points: ${item.points}</p>
+                    <button onclick="addToCC(${item.id})">Ajouter au Click & Collect</button>
+                    <button onclick="addToPrepare(${item.id})">Ajouter à ma commande</button>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // CLICK & COLLECT
+        // ============================================
+        
+        function addToCC(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            ccCart.push({...item});
+            showToast(`${item.name} ajouté - Commande en cours`, 'preparing');
+        }
+
+        function updateCCCart() {
+            const cartDiv = document.getElementById('ccCart');
+            if (ccCart.length === 0) {
+                cartDiv.innerHTML = '<p>Votre panier est vide</p>';
+                document.getElementById('ccTotal').style.display = 'none';
+                document.getElementById('ccValidateBtn').style.display = 'none';
+                return;
+            }
+
+            let total = 0;
+            let totalPoints = 0;
+
+            cartDiv.innerHTML = ccCart.map((item, index) => {
+                total += item.price;
+                totalPoints += item.points;
+                return `
+                    <div class="cart-item">
+                        <span>${item.name} - ${item.price.toFixed(2)}€ (${item.points} pts)</span>
+                        <button onclick="removeFromCC(${index})">Retirer</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('ccTotalPrice').textContent = total.toFixed(2);
+            document.getElementById('ccTotalPoints').textContent = totalPoints;
+            document.getElementById('ccTotal').style.display = 'block';
+            document.getElementById('ccValidateBtn').style.display = 'block';
+        }
+
+        function removeFromCC(index) {
+            ccCart.splice(index, 1);
+            updateCCCart();
+        }
+
+        async function validateClickCollect() {
+            if (ccCart.length === 0) return;
+
+            const totalPoints = ccCart.reduce((sum, item) => sum + item.points, 0);
+            const totalPrice = ccCart.reduce((sum, item) => sum + item.price, 0);
+
+            try {
+                // Créer la commande sur le serveur
+                const order = await api.post('/orders', {
+                    type: 'clickcollect',
+                    userId: currentUser ? currentUser.id : null,
+                    clientId: document.getElementById('userId').textContent,
+                    items: [...ccCart],
+                    total: totalPrice,
+                    points: totalPoints,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                });
+
+                // Mettre à jour les points utilisateur
+                if (currentUser) {
+                    currentUser.points += totalPoints;
+                    await saveUserPoints();
+                }
+
+                document.getElementById('ccSuccess').innerHTML = `
+                    <div class="success-message">
+                        ✅ Commande #${order.id} validée ! +${totalPoints} points ajoutés à votre compte.
+                        Votre commande sera prête sous 15 minutes.
+                    </div>
+                `;
+                document.getElementById('ccSuccess').style.display = 'block';
+
+                ccCart = [];
+                updateCCCart();
+
+                setTimeout(() => {
+                    document.getElementById('ccSuccess').style.display = 'none';
+                }, 5000);
+
+            } catch (error) {
+                showToast('Erreur lors de la validation', 'error');
+            }
+        }
+
+        // ============================================
+        // PREPARER MA COMMANDE
+        // ============================================
+        
+        function addToPrepare(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            prepareCart.push({...item});
+            showToast(`${item.name} ajouté au panier`);
+        }
+
+        function updatePrepareCart() {
+            const cartDiv = document.getElementById('prepareCart');
+            if (prepareCart.length === 0) {
+                cartDiv.innerHTML = '<p>Votre panier est vide</p>';
+                document.getElementById('prepareTotal').style.display = 'none';
+                document.getElementById('prepareValidateBtn').style.display = 'none';
+                return;
+            }
+
+            let total = 0;
+            let totalPoints = 0;
+
+            cartDiv.innerHTML = prepareCart.map((item, index) => {
+                total += item.price;
+                totalPoints += item.points;
+                return `
+                    <div class="cart-item">
+                        <span>${item.name} - ${item.price.toFixed(2)}€ (${item.points} pts)</span>
+                        <button onclick="removeFromPrepare(${index})">Retirer</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('prepareTotalPrice').textContent = total.toFixed(2);
+            document.getElementById('prepareTotalPoints').textContent = totalPoints;
+            document.getElementById('prepareTotal').style.display = 'block';
+            document.getElementById('prepareValidateBtn').style.display = 'block';
+        }
+
+        function removeFromPrepare(index) {
+            prepareCart.splice(index, 1);
+            updatePrepareCart();
+        }
+
+        async function generateOrderQR() {
+            if (prepareCart.length === 0) return;
+
+            try {
+                const orderData = {
+                    type: 'pending',
+                    userId: currentUser ? currentUser.id : null,
+                    clientId: document.getElementById('userId').textContent,
+                    items: prepareCart,
+                    total: prepareCart.reduce((sum, item) => sum + item.price, 0),
+                    points: prepareCart.reduce((sum, item) => sum + item.points, 0),
+                    status: 'waiting_payment',
+                    createdAt: new Date().toISOString()
+                };
+
+                // Sauvegarder la commande en attente sur le serveur
+                const savedOrder = await api.post('/pendingOrders', orderData);
+
+                // Générer le QR code avec l'ID de la commande
+                const qrData = {
+                    orderId: savedOrder.id,
+                    ...orderData
+                };
+
+                document.getElementById('orderQRCode').innerHTML = '';
+                new QRCode(document.getElementById("orderQRCode"), {
+                    text: JSON.stringify(qrData),
+                    width: 250,
+                    height: 250
+                });
+
+                document.getElementById('orderQRSection').style.display = 'block';
+                showToast('QR Code généré avec succès !');
+
+            } catch (error) {
+                showToast('Erreur lors de la génération du QR', 'error');
+            }
+        }
+
+        // ============================================
+        // ADMIN
+        // ============================================
+        
+        function loginAdmin() {
+            const code = document.getElementById('adminCode').value;
+            if (code === '123') {
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadAdminOrders();
+            } else {
+                alert('Code incorrect');
+            }
+        }
+
+        async function loadAdminOrders() {
+            const ordersDiv = document.getElementById('adminOrders');
+
+            try {
+                const orders = await api.get('/orders?status=pending');
+
+                if (orders.length === 0) {
+                    ordersDiv.innerHTML = '<p>Aucune commande en cours</p>';
+                    return;
+                }
+
+                ordersDiv.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <strong>Commande #${order.id}</strong><br>
+                        ${new Date(order.createdAt).toLocaleString()}<br>
+                        <div class="order-items">
+                            ${order.items.map(item => `${item.name}`).join(', ')}
+                        </div>
+                        Total: ${order.total.toFixed(2)}€ | Points accordés: ${order.points}<br>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="markOrderComplete(${order.id})">Marquer comme terminée</button>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                ordersDiv.innerHTML = '<p>Erreur de chargement des commandes</p>';
+            }
+        }
+
+        async function markOrderComplete(orderId) {
+            try {
+                await api.patch(`/orders/${orderId}`, {
+                    status: 'completed',
+                    completedAt: new Date().toISOString()
+                });
+                
+                loadAdminOrders();
+                showToast('Commande marquée comme terminée');
+                
+            } catch (error) {
+                showToast('Erreur lors de la mise à jour', 'error');
+            }
+        }
+
+        function startScanner() {
+            const readerDiv = document.getElementById('reader');
+            readerDiv.style.display = 'block';
+
+            if (html5QrCode) {
+                html5QrCode.stop();
+            }
+
+            html5QrCode = new Html5Qrcode("reader");
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                onScanSuccess
+            ).catch(err => {
+                alert("Erreur caméra: " + err);
+            });
+        }
+
+        function onScanSuccess(decodedText) {
+            try {
+                const orderData = JSON.parse(decodedText);
+                displayScannedOrder(orderData);
+                html5QrCode.stop();
+                document.getElementById('reader').style.display = 'none';
+            } catch (e) {
+                alert("QR code invalide");
+            }
+        }
+
+        function displayScannedOrder(orderData) {
+            const section = document.getElementById('scannedOrderSection');
+            section.innerHTML = `
+                <div class="scanned-order">
+                    <h3>Commande scannée</h3>
+                    <p><strong>Client ID:</strong> ${orderData.clientId}</p>
+                    <p><strong>Commande #${orderData.orderId}</strong></p>
+                    <div class="order-items">
+                        ${orderData.items.map(item => `<p>${item.name} - ${item.price.toFixed(2)}€</p>`).join('')}
+                    </div>
+                    <p><strong>Total:</strong> ${orderData.total.toFixed(2)}€</p>
+                    <p><strong>Points à créditer:</strong> ${orderData.points}</p>
+                    <button class="btn-primary" onclick="validateScannedOrder(${orderData.points}, ${orderData.orderId}, '${orderData.clientId}')">
+                        Valider la commande
+                    </button>
+                </div>
+            `;
+        }
+
+        async function validateScannedOrder(points, orderId, clientId) {
+            try {
+                // Trouver l'utilisateur par clientId
+                const users = await api.get(`/users?clientId=${clientId}`);
+                
+                if (users.length > 0) {
+                    const user = users[0];
+                    // Créditer les points
+                    await api.patch(`/users/${user.id}`, {
+                        points: user.points + points
+                    });
+                }
+
+                // Supprimer la commande en attente
+                try {
+                    await api.delete(`/pendingOrders/${orderId}`);
+                } catch (e) {
+                    // La commande n'existe peut-être pas
+                }
+
+                // Créer une commande validée
+                await api.post('/orders', {
+                    type: 'instore',
+                    clientId: clientId,
+                    points: points,
+                    status: 'completed',
+                    completedAt: new Date().toISOString()
+                });
+
+                // Mettre à jour l'affichage local si c'est le même utilisateur
+                if (currentUser && currentUser.clientId === clientId) {
+                    currentUser.points += points;
+                    updatePointsDisplay();
+                }
+
+                document.getElementById('scannedOrderSection').innerHTML = `
+                    <div class="success-message">
+                        ✅ Commande validée et payée ! ${points} points crédités.
+                    </div>
+                `;
+
+                showToast(`${points} points crédités au client !`);
+
+            } catch (error) {
+                showToast('Erreur lors de la validation', 'error');
+            }
+        }
+
+        // ============================================
+        // RECOMPENSES
+        // ============================================
+        
+        function updateRewardsSection() {
+            const points = currentUser ? currentUser.points : 0;
+            document.getElementById('rewardsPoints').textContent = points;
+            const redeemBtn = document.getElementById('redeemBtn');
+            
+            if (points >= 50) {
+                redeemBtn.disabled = false;
+                redeemBtn.textContent = 'Échanger';
+            } else {
+                redeemBtn.disabled = true;
+                redeemBtn.textContent = `Plus que ${50 - points} points`;
+            }
+        }
+
+        async function redeemReward() {
+            if (!currentUser || currentUser.points < 50) {
+                alert('Vous n\'avez pas assez de points');
+                return;
+            }
+
+            try {
+                currentUser.points -= 50;
+                await saveUserPoints();
+
+                // Enregistrer la récompense
+                await api.post('/rewards', {
+                    userId: currentUser.id,
+                    clientId: currentUser.clientId,
+                    type: 'free_drink',
+                    pointsCost: 50,
+                    redeemedAt: new Date().toISOString(),
+                    status: 'pending'
+                });
+                
+                document.getElementById('rewardSuccess').innerHTML = `
+                    <div class="success-message">
+                        🎉 Félicitations ! Vous avez obtenu une boisson offerte !<br>
+                        Présentez votre profil à la caisse pour récupérer votre récompense.
+                    </div>
+                `;
+                document.getElementById('rewardSuccess').style.display = 'block';
+
+                updateRewardsSection();
+
+                setTimeout(() => {
+                    document.getElementById('rewardSuccess').style.display = 'none';
+                }, 5000);
+
+            } catch (error) {
+                showToast('Erreur lors de l\'échange', 'error');
+            }
+        }
+
+        // ============================================
+        // UTILITAIRES
+        // ============================================
+        
+        function showToast(message, type = '') {
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (type ? ' ' + type : '');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
