@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "clientId": "12345",
+      "points": 0,
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    }
+  ],
+  "accounts": [],
+  "orders": [],
+  "secretOrders": [],
+  "pendingOrders": [],
+  "rewards": []
+}
